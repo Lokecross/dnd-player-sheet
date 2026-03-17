@@ -426,6 +426,211 @@ h1, h2, h3 { font-weight: normal; margin: 0; }
   field-sizing: content;
 }
 
+/* Portrait URL edit */
+.portrait-url-edit {
+  position: absolute;
+  bottom: -18px;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.portrait-container:hover .portrait-url-edit {
+  opacity: 1;
+}
+
+.portrait-url-edit .editable-input {
+  font-size: 10px !important;
+  color: var(--text-dim);
+  width: 100% !important;
+  display: block;
+  background: var(--bg-void);
+  padding: 2px;
+}
+
+/* Death saves & exhaustion */
+.death-exhaustion-block {
+  margin-top: 16px;
+  border: 2px solid var(--border-rust);
+  background: var(--bg-void);
+  padding: 10px;
+}
+
+.death-saves-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.death-saves-pips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.exhaustion-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Appearance */
+.appearance-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.appearance-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Currency */
+.currency-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.currency-field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--border-rust);
+  padding: 4px 6px;
+  background: var(--bg-void);
+  flex: 1;
+  min-width: 50px;
+}
+
+/* Conditions */
+.conditions-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.condition-badge {
+  padding: 4px 10px;
+  border: 1px solid var(--border-rust);
+  color: var(--text-dim);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  user-select: none;
+}
+
+.condition-badge:hover {
+  border-color: var(--border-bronze);
+}
+
+.condition-badge.active {
+  background: var(--text-blood);
+  color: var(--text-bone);
+  border-color: var(--text-blood);
+}
+
+/* Spell slots */
+.spell-slots-section {
+  margin-top: 12px;
+}
+
+.spell-slot-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(122, 84, 49, 0.15);
+}
+
+.spell-slot-row.dimmed {
+  opacity: 0.35;
+}
+
+/* Add / Remove buttons */
+.add-btn {
+  width: 100%;
+  padding: 8px;
+  border: 1px dashed var(--border-bronze);
+  background: transparent;
+  color: var(--text-dim);
+  font-family: var(--font-pixel);
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.15s;
+  letter-spacing: 1px;
+}
+
+.add-btn:hover {
+  border-color: var(--text-amber);
+  color: var(--text-amber);
+  background: rgba(179, 139, 77, 0.05);
+}
+
+.remove-btn {
+  color: var(--text-blood);
+  opacity: 0.4;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  transition: opacity 0.15s;
+  user-select: none;
+}
+
+.remove-btn:hover {
+  opacity: 1;
+}
+
+/* Toolbar */
+.toolbar {
+  max-width: 1360px;
+  margin: 0 auto 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 0 6px;
+}
+
+.toolbar-btn {
+  background: var(--bg-panel);
+  border: 2px solid var(--border-bronze);
+  color: var(--text-amber);
+  font-family: var(--font-pixel);
+  font-size: 16px;
+  padding: 6px 16px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.15s;
+}
+
+.toolbar-btn:hover {
+  background: var(--bg-panel-light);
+  border-color: var(--border-gold);
+}
+
+.toolbar-btn.danger {
+  color: var(--text-blood);
+  border-color: var(--border-rust);
+}
+
+.toolbar-btn.danger:hover {
+  background: rgba(196, 35, 35, 0.1);
+  border-color: var(--text-blood);
+}
+
 /* Responsive — Tablet (2 columns) */
 @media (max-width: 1100px) {
   .desktop-container {
@@ -533,6 +738,29 @@ h1, h2, h3 { font-weight: normal; margin: 0; }
   .hp-current,
   .hp-current-input {
     font-size: 26px !important;
+  }
+
+  /* Appearance */
+  .appearance-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Death saves */
+  .death-saves-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Conditions */
+  .condition-badge {
+    font-size: 12px;
+    padding: 3px 8px;
+  }
+
+  /* Toolbar */
+  .toolbar {
+    justify-content: center;
+    margin-bottom: 16px;
   }
 }
 

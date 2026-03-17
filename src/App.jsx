@@ -5,7 +5,13 @@ function useLocalStorage(key, defaultValue) {
   const [value, setValue] = useState(() => {
     try {
       const saved = localStorage.getItem(key)
-      return saved ? JSON.parse(saved) : defaultValue
+      if (!saved) return defaultValue
+      const parsed = JSON.parse(saved)
+      // Merge defaults for objects so new fields get default values
+      if (defaultValue && typeof defaultValue === 'object' && !Array.isArray(defaultValue)) {
+        return { ...defaultValue, ...parsed }
+      }
+      return parsed
     } catch {
       return defaultValue
     }
@@ -64,30 +70,43 @@ function IdentityPanel({ data, setData }) {
       <div className="identity-grid">
         <div className="portrait-container">
           <img
-            src="https://images.unsplash.com/photo-1509557965875-b88c97052f0e?auto=format&fit=crop&q=80&w=200&h=250"
-            alt="Character Portrait"
+            src={data.portraitUrl || 'https://images.unsplash.com/photo-1509557965875-b88c97052f0e?auto=format&fit=crop&q=80&w=200&h=250'}
+            alt="Retrato do Personagem"
           />
+          <div className="portrait-url-edit">
+            <EditableText value={data.portraitUrl} onChange={(v) => update('portraitUrl', v)} style={{ fontSize: '10px', color: 'var(--text-dim)', width: '96px' }} size={12} />
+          </div>
         </div>
         <div className="char-info">
           <div className="char-name">
             <EditableText value={data.name} onChange={(v) => update('name', v)} className="amber-text" style={{ fontSize: '36px' }} />
           </div>
           <div className="char-meta">
-            <span>LVL <EditableText value={data.level} onChange={(v) => update('level', v)} size={3} /></span>
+            <span>NVL <EditableText value={data.level} onChange={(v) => update('level', v)} size={3} /></span>
             <span>•</span>
             <span><EditableText value={data.class} onChange={(v) => update('class', v)} /></span>
             <span>•</span>
             <span><EditableText value={data.race} onChange={(v) => update('race', v)} /></span>
+            <span>•</span>
+            <span><EditableText value={data.alignment} onChange={(v) => update('alignment', v)} /></span>
           </div>
           <div className="char-meta" style={{ color: 'var(--text-dim)', fontSize: '16px' }}>
-            BACKGROUND: <EditableText value={data.background} onChange={(v) => update('background', v)} style={{ fontSize: '16px', color: 'var(--text-dim)' }} />
+            <span>ANTECEDENTE: <EditableText value={data.background} onChange={(v) => update('background', v)} style={{ fontSize: '16px', color: 'var(--text-dim)' }} /></span>
+            <span>•</span>
+            <span>XP: <EditableText value={data.xp} onChange={(v) => update('xp', v)} style={{ fontSize: '16px', color: 'var(--text-dim)' }} size={6} /></span>
+          </div>
+          <div className="char-meta" style={{ fontSize: '16px', marginTop: '2px' }}>
+            <span className="inspiration-toggle" onClick={() => update('inspiration', data.inspiration ? 0 : 1)} style={{ cursor: 'pointer' }}>
+              <span className={`pip${data.inspiration ? ' filled' : ''}`} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '6px' }} />
+              <span className="label">INSPIRACAO</span>
+            </span>
           </div>
         </div>
       </div>
 
       <div className="vitality-block">
         <div className="hp-numbers">
-          <span className="label">VITALITY</span>
+          <span className="label">VITALIDADE</span>
           <div>
             <EditableText value={data.hpCurrent} onChange={(v) => update('hpCurrent', v)} className="hp-current-input" style={{ fontSize: '32px', color: 'var(--text-blood)' }} size={4} />
             <span className="hp-max">/ <EditableText value={data.hpMax} onChange={(v) => update('hpMax', v)} style={{ fontSize: '20px', color: 'var(--text-dim)' }} size={3} /></span>
@@ -98,12 +117,45 @@ function IdentityPanel({ data, setData }) {
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
           <span className="label" style={{ fontSize: '16px' }}>
-            TEMP HP: <EditableText value={data.tempHp} onChange={(v) => update('tempHp', v)} className="amber-text" style={{ fontSize: '16px' }} size={3} />
+            PV TEMP: <EditableText value={data.tempHp} onChange={(v) => update('tempHp', v)} className="amber-text" style={{ fontSize: '16px' }} size={3} />
           </span>
           <span className="label" style={{ fontSize: '16px' }}>
-            HIT DICE: <EditableText value={data.hitDice} onChange={(v) => update('hitDice', v)} className="value" style={{ fontSize: '18px' }} size={4} />
+            DADOS DE VIDA: <EditableText value={data.hitDice} onChange={(v) => update('hitDice', v)} className="value" style={{ fontSize: '18px' }} size={4} />
           </span>
         </div>
+      </div>
+
+      <div className="death-exhaustion-block">
+        <div className="death-saves-row">
+          <span className="label">TESTES CONTRA MORTE</span>
+          <div className="death-saves-pips">
+            <span className="label" style={{ fontSize: '14px', color: 'var(--text-bone)' }}>SUCESSO</span>
+            <Pips total={3} filled={data.deathSuccess} onToggle={(idx) => update('deathSuccess', idx < data.deathSuccess ? idx : idx + 1)} />
+            <span className="label" style={{ fontSize: '14px', color: 'var(--text-blood)' }}>FALHA</span>
+            <Pips total={3} filled={data.deathFail} onToggle={(idx) => update('deathFail', idx < data.deathFail ? idx : idx + 1)} />
+          </div>
+        </div>
+        <div className="exhaustion-row">
+          <span className="label">EXAUSTAO</span>
+          <Pips total={6} filled={data.exhaustion} onToggle={(idx) => update('exhaustion', idx < data.exhaustion ? idx : idx + 1)} />
+        </div>
+      </div>
+
+      <div className="appearance-grid">
+        <span className="label" style={{ gridColumn: '1 / -1', marginBottom: '4px' }}>APARENCIA</span>
+        {[
+          { key: 'age', label: 'IDADE' },
+          { key: 'height', label: 'ALTURA' },
+          { key: 'weight', label: 'PESO' },
+          { key: 'eyes', label: 'OLHOS' },
+          { key: 'hair', label: 'CABELO' },
+          { key: 'skin', label: 'PELE' },
+        ].map(({ key: field, label }) => (
+          <div className="appearance-field" key={field}>
+            <span className="label" style={{ fontSize: '12px' }}>{label}</span>
+            <EditableText value={data[field]} onChange={(v) => update(field, v)} style={{ fontSize: '16px', color: 'var(--text-bone)' }} size={8} />
+          </div>
+        ))}
       </div>
     </Panel>
   )
@@ -123,7 +175,7 @@ function AttributesPanel({ combatStats, setCombatStats, stats, setStats }) {
   }
 
   return (
-    <Panel header="ATTRIBUTES">
+    <Panel header="ATRIBUTOS">
       <div className="combat-grid">
         {combatStats.map((s, i) => (
           <div className="combat-box" key={s.label}>
@@ -176,9 +228,9 @@ function ArchivesPanel({ data, setData }) {
   const update = (key, val) => setData({ ...data, [key]: val })
 
   return (
-    <Panel header="THE ARCHIVES">
+    <Panel header="ARQUIVOS">
       <div className="text-block">
-        <span className="label">TRAITS & FEATURES</span>
+        <span className="label">TRACOS & HABILIDADES</span>
         <EditableArea
           value={data.traits}
           onChange={(v) => update('traits', v)}
@@ -189,10 +241,50 @@ function ArchivesPanel({ data, setData }) {
       <div className="divider" />
 
       <div className="text-block">
-        <span className="label">INVENTORY</span>
+        <span className="label">TALENTOS</span>
+        <EditableArea
+          value={data.feats}
+          onChange={(v) => update('feats', v)}
+          style={{ color: 'var(--text-bone)', fontSize: '18px', lineHeight: 1.5 }}
+        />
+      </div>
+
+      <div className="divider" />
+
+      <div className="currency-row">
+        <span className="label" style={{ width: '100%', marginBottom: '6px' }}>MOEDAS</span>
+        {[
+          { key: 'cp', label: 'PC' },
+          { key: 'sp', label: 'PP' },
+          { key: 'ep', label: 'PE' },
+          { key: 'gp', label: 'PO' },
+          { key: 'pp', label: 'PL' },
+        ].map(({ key, label }) => (
+          <div className="currency-field" key={key}>
+            <span className="label" style={{ fontSize: '14px' }}>{label}</span>
+            <EditableText value={data[key]} onChange={(v) => update(key, v)} style={{ fontSize: '20px', color: key === 'gp' ? 'var(--text-amber)' : 'var(--text-bone)', textAlign: 'center' }} size={5} />
+          </div>
+        ))}
+      </div>
+
+      <div className="divider" />
+
+      <div className="text-block">
+        <span className="label">INVENTARIO</span>
         <EditableArea
           value={data.inventory}
           onChange={(v) => update('inventory', v)}
+          style={{ color: 'var(--text-dim)', fontSize: '18px', lineHeight: 1.5 }}
+        />
+      </div>
+
+      <div className="divider" />
+
+      <div className="text-block">
+        <span className="label">RESISTENCIAS / IMUNIDADES / VULNERABILIDADES</span>
+        <EditableArea
+          value={data.resistances}
+          onChange={(v) => update('resistances', v)}
           style={{ color: 'var(--text-dim)', fontSize: '18px', lineHeight: 1.5 }}
         />
       </div>
@@ -200,13 +292,19 @@ function ArchivesPanel({ data, setData }) {
   )
 }
 
-function SkillRow({ name, mod, proficiency, attr, amberMod, onModChange, onNameChange }) {
+function SkillRow({ name, mod, proficiency, attr, amberMod, onModChange, onNameChange, onProfChange, onRemove }) {
   const pipClass = `prof-pip${proficiency === 'active' ? ' active' : ''}${proficiency === 'exp' ? ' exp' : ''}`
+
+  const cycleProficiency = () => {
+    if (!onProfChange) return
+    const cycle = { undefined: 'active', active: 'exp', exp: undefined }
+    onProfChange(cycle[proficiency])
+  }
 
   return (
     <div className="skill-row">
       <div className="skill-name">
-        <span className={pipClass} />
+        <span className={pipClass} onClick={cycleProficiency} style={{ cursor: 'pointer' }} />
         {onNameChange ? (
           <EditableText value={name} onChange={onNameChange} style={{ fontSize: '20px' }} />
         ) : (
@@ -214,14 +312,17 @@ function SkillRow({ name, mod, proficiency, attr, amberMod, onModChange, onNameC
         )}
         {attr && <span className="skill-attr">{attr}</span>}
       </div>
-      <div className={`skill-mod${amberMod ? ' amber-text' : ''}`}>
-        <EditableText
-          value={mod}
-          onChange={onModChange}
-          className={amberMod ? 'amber-text' : ''}
-          style={{ fontSize: '22px', textAlign: 'right', width: '36px' }}
-          size={4}
-        />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div className={`skill-mod${amberMod ? ' amber-text' : ''}`}>
+          <EditableText
+            value={mod}
+            onChange={onModChange}
+            className={amberMod ? 'amber-text' : ''}
+            style={{ fontSize: '22px', textAlign: 'right', width: '36px' }}
+            size={4}
+          />
+        </div>
+        {onRemove && <span className="remove-btn" onClick={onRemove}>x</span>}
       </div>
     </div>
   )
@@ -241,15 +342,15 @@ function ProficienciesPanel({ saves, setSaves, skills, setSkills, profData, setP
   }
 
   return (
-    <Panel header="PROFICIENCIES">
-      <span className="section-label">SAVING THROWS</span>
+    <Panel header="PROEFICIENCIAS">
+      <span className="section-label">TESTES DE RESISTENCIA</span>
       <div className="skill-list" style={{ marginBottom: '24px' }}>
         {saves.map((s, i) => (
-          <SkillRow key={s.name} {...s} onModChange={(v) => updateSave(i, v)} />
+          <SkillRow key={s.name} {...s} onModChange={(v) => updateSave(i, v)} onProfChange={(v) => { const next = [...saves]; next[i] = { ...next[i], proficiency: v }; setSaves(next) }} />
         ))}
       </div>
 
-      <span className="section-label">NOTABLE SKILLS</span>
+      <span className="section-label">PERICIAS NOTAVEIS</span>
       <div className="skill-list">
         {skills.map((s, i) => (
           <SkillRow
@@ -257,18 +358,21 @@ function ProficienciesPanel({ saves, setSaves, skills, setSkills, profData, setP
             {...s}
             onModChange={(v) => updateSkill(i, 'mod', v)}
             onNameChange={(v) => updateSkill(i, 'name', v)}
+            onProfChange={(v) => updateSkill(i, 'proficiency', v)}
+            onRemove={skills.length > 1 ? () => setSkills(skills.filter((_, j) => j !== i)) : undefined}
           />
         ))}
       </div>
+      <button className="add-btn" onClick={() => setSkills([...skills, { name: 'Nova Pericia', mod: '+0', attr: 'ATTR' }])}>+ ADICIONAR PERICIA</button>
 
       <div className="divider" />
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <div className="label" style={{ fontSize: '16px' }}>
-          PASSIVE PERCEPTION: <EditableText value={profData.passivePerception} onChange={(v) => setProfData({ ...profData, passivePerception: v })} className="value" style={{ marginLeft: '8px', fontSize: '16px' }} size={3} />
+          PERCEPCAO PASSIVA: <EditableText value={profData.passivePerception} onChange={(v) => setProfData({ ...profData, passivePerception: v })} className="value" style={{ marginLeft: '8px', fontSize: '16px' }} size={3} />
         </div>
         <div className="label" style={{ fontSize: '16px' }}>
-          LANGUAGES:{' '}
+          IDIOMAS:{' '}
           <EditableText
             value={profData.languages}
             onChange={(v) => setProfData({ ...profData, languages: v })}
@@ -302,8 +406,21 @@ function ActionsPanel({ weapons, setWeapons }) {
     setWeapons(next)
   }
 
+  const removeWeapon = (i) => {
+    if (weapons.length <= 1) return
+    setWeapons(weapons.filter((_, j) => j !== i))
+  }
+
+  const addWeapon = () => {
+    setWeapons([...weapons, { name: 'Nova Arma', type: 'Tipo', atk: '+0', dmg: '1d6', dmgType: 'Cortante' }])
+  }
+
+  const addAbility = () => {
+    setWeapons([...weapons, { name: 'Nova Habilidade', type: 'Acao', isAbility: true, description: 'Descricao', usesTotal: 3, usesFilled: 0 }])
+  }
+
   return (
-    <Panel header="ACTIONS">
+    <Panel header="ACOES">
       {weapons.map((w, i) => {
         if (w.isAbility) {
           return (
@@ -314,7 +431,10 @@ function ActionsPanel({ weapons, setWeapons }) {
             >
               <div className="weapon-header" style={{ borderBottom: 'none', paddingBottom: 0, marginBottom: 0 }}>
                 <EditableText value={w.name} onChange={(v) => updateWeapon(i, 'name', v)} className="weapon-name" style={{ fontSize: '20px' }} />
-                <EditableText value={w.type} onChange={(v) => updateWeapon(i, 'type', v)} className="weapon-type" style={{ fontSize: '16px', color: 'var(--text-dim)', textAlign: 'right' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <EditableText value={w.type} onChange={(v) => updateWeapon(i, 'type', v)} className="weapon-type" style={{ fontSize: '16px', color: 'var(--text-dim)', textAlign: 'right' }} />
+                  {weapons.length > 1 && <span className="remove-btn" onClick={() => removeWeapon(i)}>x</span>}
+                </div>
               </div>
               <div style={{ marginTop: '6px' }}>
                 <EditableArea
@@ -324,7 +444,7 @@ function ActionsPanel({ weapons, setWeapons }) {
                 />
               </div>
               <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span className="label">USES:</span>
+                <span className="label">USOS:</span>
                 <Pips
                   total={w.usesTotal}
                   filled={w.usesFilled}
@@ -341,25 +461,32 @@ function ActionsPanel({ weapons, setWeapons }) {
           <div className="weapon-card" key={i}>
             <div className="weapon-header">
               <EditableText value={w.name} onChange={(v) => updateWeapon(i, 'name', v)} className={`weapon-name${w.amber ? ' amber-text' : ''}`} style={{ fontSize: '22px' }} />
-              <EditableText value={w.type} onChange={(v) => updateWeapon(i, 'type', v)} className="weapon-type" style={{ fontSize: '16px', color: 'var(--text-dim)', textAlign: 'right' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <EditableText value={w.type} onChange={(v) => updateWeapon(i, 'type', v)} className="weapon-type" style={{ fontSize: '16px', color: 'var(--text-dim)', textAlign: 'right' }} />
+                {weapons.length > 1 && <span className="remove-btn" onClick={() => removeWeapon(i)}>x</span>}
+              </div>
             </div>
             <div className="weapon-stats">
               <div className="weapon-stat-group">
-                <span className="label">ATK</span>
+                <span className="label">ATAQ</span>
                 <EditableText value={w.atk} onChange={(v) => updateWeapon(i, 'atk', v)} className="value" style={{ fontSize: '22px' }} size={4} />
               </div>
               <div className="weapon-stat-group">
-                <span className="label">DMG</span>
+                <span className="label">DANO</span>
                 <EditableText value={w.dmg} onChange={(v) => updateWeapon(i, 'dmg', v)} className="value" style={{ fontSize: '22px' }} size={7} />
               </div>
               <div className="weapon-stat-group">
-                <span className="label">TYPE</span>
+                <span className="label">TIPO</span>
                 <EditableText value={w.dmgType} onChange={(v) => updateWeapon(i, 'dmgType', v)} style={{ fontSize: '22px', color: 'var(--text-bone)' }} />
               </div>
             </div>
           </div>
         )
       })}
+      <div style={{ display: 'flex', gap: '8px' }}>
+        <button className="add-btn" onClick={addWeapon}>+ ARMA</button>
+        <button className="add-btn" onClick={addAbility}>+ HABILIDADE</button>
+      </div>
     </Panel>
   )
 }
@@ -367,10 +494,18 @@ function ActionsPanel({ weapons, setWeapons }) {
 function ArcanaPanel({ arcana, setArcana }) {
   const update = (key, val) => setArcana({ ...arcana, [key]: val })
 
+  const updateSlot = (lvl, key, val) => {
+    const next = [...arcana.spellSlots]
+    next[lvl] = { ...next[lvl], [key]: val }
+    update('spellSlots', next)
+  }
+
+  const ordinal = ['1o', '2o', '3o', '4o', '5o', '6o', '7o', '8o', '9o']
+
   return (
     <Panel header="ARCANA">
       <div className="resource-track">
-        <span className="label" style={{ width: '100px' }}>PACT SLOTS</span>
+        <span className="label" style={{ width: '100px' }}>ESPACOS DE PACTO</span>
         <span className="value" style={{ fontSize: '20px', marginRight: '8px' }}>
           LVL <EditableText value={arcana.pactLevel} onChange={(v) => update('pactLevel', v)} className="value" style={{ fontSize: '20px' }} size={2} />
         </span>
@@ -381,15 +516,37 @@ function ArcanaPanel({ arcana, setArcana }) {
         />
       </div>
 
-      <div className="text-block" style={{ marginTop: '16px' }}>
-        <span className="label">CANTRIPS</span>
+      <div className="spell-slots-section">
+        <span className="section-label" style={{ marginTop: '12px' }}>ESPACOS DE MAGIA</span>
+        {arcana.spellSlots.map((slot, i) => {
+          const total = parseInt(slot.total) || 0
+          return (
+            <div className={`spell-slot-row${total === 0 ? ' dimmed' : ''}`} key={i}>
+              <span className="label" style={{ width: '36px', fontSize: '16px' }}>{ordinal[i]}</span>
+              <EditableText value={slot.total} onChange={(v) => updateSlot(i, 'total', v)} style={{ fontSize: '16px', color: 'var(--text-dim)', textAlign: 'center' }} size={2} />
+              {total > 0 && (
+                <Pips
+                  total={total}
+                  filled={Math.min(slot.filled, total)}
+                  onToggle={(idx) => updateSlot(i, 'filled', idx < slot.filled ? idx : idx + 1)}
+                />
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="divider" />
+
+      <div className="text-block">
+        <span className="label">TRUQUES</span>
         <EditableArea
           value={arcana.cantrips}
           onChange={(v) => update('cantrips', v)}
           style={{ color: 'var(--text-dim)', fontSize: '18px', lineHeight: 1.5 }}
         />
 
-        <span className="label">SPELLS KNOWN</span>
+        <span className="label">MAGIAS CONHECIDAS</span>
         <EditableArea
           value={arcana.spells}
           onChange={(v) => update('spells', v)}
@@ -400,7 +557,7 @@ function ArcanaPanel({ arcana, setArcana }) {
       <div className="divider" />
 
       <div className="text-block">
-        <span className="label">INVOCATIONS</span>
+        <span className="label">INVOCACOES</span>
         <EditableArea
           value={arcana.invocations}
           onChange={(v) => update('invocations', v)}
@@ -411,60 +568,169 @@ function ArcanaPanel({ arcana, setArcana }) {
   )
 }
 
+const CONDITIONS = [
+  'Cego', 'Enfeiticado', 'Surdo', 'Amedrontado', 'Agarrado', 'Incapacitado', 'Invisivel',
+  'Paralisado', 'Petrificado', 'Envenenado', 'Caido', 'Impedido', 'Atordoado', 'Inconsciente',
+]
+
+function PersonalityPanel({ data, setData }) {
+  const update = (key, val) => setData({ ...data, [key]: val })
+
+  return (
+    <Panel header="PERSONALIDADE">
+      {[
+        { key: 'traits', label: 'TRACOS DE PERSONALIDADE' },
+        { key: 'ideals', label: 'IDEAIS' },
+        { key: 'bonds', label: 'VINCULOS' },
+        { key: 'flaws', label: 'DEFEITOS' },
+      ].map(({ key, label }, i) => (
+        <div key={key}>
+          {i > 0 && <div className="divider" />}
+          <div className="text-block">
+            <span className="label">{label}</span>
+            <EditableArea
+              value={data[key]}
+              onChange={(v) => update(key, v)}
+              style={{ color: 'var(--text-bone)', fontSize: '18px', lineHeight: 1.5 }}
+            />
+          </div>
+        </div>
+      ))}
+    </Panel>
+  )
+}
+
+function ConditionsPanel({ data, setData }) {
+  const toggle = (condition) => setData({ ...data, [condition]: !data[condition] })
+
+  return (
+    <Panel header="CONDICOES">
+      <div className="conditions-grid">
+        {CONDITIONS.map((c) => (
+          <span
+            key={c}
+            className={`condition-badge${data[c] ? ' active' : ''}`}
+            onClick={() => toggle(c)}
+          >
+            {c}
+          </span>
+        ))}
+      </div>
+    </Panel>
+  )
+}
+
+function NotesPanel({ data, setData }) {
+  const update = (key, val) => setData({ ...data, [key]: val })
+
+  return (
+    <Panel header="NOTAS">
+      <div className="text-block">
+        <span className="label">DIARIO</span>
+        <EditableArea
+          value={data.notes}
+          onChange={(v) => update('notes', v)}
+          style={{ color: 'var(--text-bone)', fontSize: '18px', lineHeight: 1.5 }}
+        />
+      </div>
+
+      <div className="divider" />
+
+      <div className="text-block">
+        <span className="label">ALIADOS & ORGANIZACOES</span>
+        <EditableArea
+          value={data.allies}
+          onChange={(v) => update('allies', v)}
+          style={{ color: 'var(--text-dim)', fontSize: '18px', lineHeight: 1.5 }}
+        />
+      </div>
+    </Panel>
+  )
+}
+
+function Toolbar({ onExport, onImport, onReset }) {
+  return (
+    <div className="toolbar">
+      <button className="toolbar-btn" onClick={onExport}>EXPORTAR</button>
+      <label className="toolbar-btn" style={{ cursor: 'pointer' }}>
+        IMPORTAR
+        <input type="file" accept=".json" onChange={onImport} style={{ display: 'none' }} />
+      </label>
+      <button className="toolbar-btn danger" onClick={onReset}>RESETAR</button>
+    </div>
+  )
+}
+
 function App() {
   const [identity, setIdentity] = useLocalStorage('dnd-identity', {
     name: 'MORGATH',
     level: '5',
     class: 'WARLOCK',
     race: 'UNDEAD',
+    alignment: 'CHAOTIC NEUTRAL',
     background: 'HAUNTED ONE',
+    xp: '6500',
+    inspiration: 0,
     hpCurrent: '38',
     hpMax: '45',
     tempHp: '12',
     hitDice: '5d8',
+    deathSuccess: 0,
+    deathFail: 0,
+    exhaustion: 0,
+    portraitUrl: 'https://images.unsplash.com/photo-1509557965875-b88c97052f0e?auto=format&fit=crop&q=80&w=200&h=250',
+    age: '',
+    height: '',
+    weight: '',
+    eyes: '',
+    hair: '',
+    skin: '',
   })
 
   const [combatStats, setCombatStats] = useLocalStorage('dnd-combat', [
-    { label: 'ARMOR', value: '14' },
-    { label: 'INIT', value: '+2' },
-    { label: 'SPEED', value: '30' },
+    { label: 'CA', value: '14' },
+    { label: 'INIC', value: '+2' },
+    { label: 'DESL', value: '30' },
     { label: 'PROF', value: '+3', amber: true },
   ])
 
   const [stats, setStats] = useLocalStorage('dnd-stats', [
-    { name: 'STR', mod: '-1', score: '08' },
-    { name: 'DEX', mod: '+2', score: '14' },
+    { name: 'FOR', mod: '-1', score: '08' },
+    { name: 'DES', mod: '+2', score: '14' },
     { name: 'CON', mod: '+3', score: '16' },
     { name: 'INT', mod: '+1', score: '12' },
-    { name: 'WIS', mod: '0', score: '10' },
-    { name: 'CHA', mod: '+4', score: '18', primary: true },
+    { name: 'SAB', mod: '0', score: '10' },
+    { name: 'CAR', mod: '+4', score: '18', primary: true },
   ])
 
   const [archives, setArchives] = useLocalStorage('dnd-archives', {
     traits: 'Grave Touched\nYou do not need to eat, drink, or breathe.\n\nHeart of Darkness\nThose who look into your eyes see their own demise. Advantage on intimidation against beasts.',
+    feats: '',
+    cp: '0', sp: '0', ep: '0', gp: '45', pp: '0',
     inventory: "Scholar's Pack, Component Pouch, A blackened locket containing ash, 2x Potions of Healing (red liquid swirls lazily), 45 Gold Pieces.",
+    resistances: '',
   })
 
   const [saves, setSaves] = useLocalStorage('dnd-saves', [
-    { name: 'STR', mod: '-1' },
-    { name: 'DEX', mod: '+2' },
+    { name: 'FOR', mod: '-1' },
+    { name: 'DES', mod: '+2' },
     { name: 'CON', mod: '+3' },
     { name: 'INT', mod: '+1' },
-    { name: 'WIS', mod: '+3', proficiency: 'active', amberMod: true },
-    { name: 'CHA', mod: '+7', proficiency: 'active', amberMod: true },
+    { name: 'SAB', mod: '+3', proficiency: 'active', amberMod: true },
+    { name: 'CAR', mod: '+7', proficiency: 'active', amberMod: true },
   ])
 
   const [skills, setSkills] = useLocalStorage('dnd-skills', [
-    { name: 'Arcana', mod: '+4', proficiency: 'active', attr: 'INT' },
-    { name: 'Deception', mod: '+7', proficiency: 'active', attr: 'CHA' },
-    { name: 'Intimidation', mod: '+10', proficiency: 'exp', attr: 'CHA', amberMod: true },
-    { name: 'Perception', mod: '0', attr: 'WIS' },
-    { name: 'Religion', mod: '+4', proficiency: 'active', attr: 'INT' },
+    { name: 'Arcanismo', mod: '+4', proficiency: 'active', attr: 'INT' },
+    { name: 'Enganacao', mod: '+7', proficiency: 'active', attr: 'CAR' },
+    { name: 'Intimidacao', mod: '+10', proficiency: 'exp', attr: 'CAR', amberMod: true },
+    { name: 'Percepcao', mod: '0', attr: 'SAB' },
+    { name: 'Religiao', mod: '+4', proficiency: 'active', attr: 'INT' },
   ])
 
   const [profData, setProfData] = useLocalStorage('dnd-prof', {
     passivePerception: '10',
-    languages: 'Common, Abyssal, Deep Speech',
+    languages: 'Comum, Abissal, Fala Profunda',
   })
 
   const [weapons, setWeapons] = useLocalStorage('dnd-weapons', [
@@ -477,32 +743,102 @@ function App() {
     },
   ])
 
+  const [personality, setPersonality] = useLocalStorage('dnd-personality', {
+    traits: '',
+    ideals: '',
+    bonds: '',
+    flaws: '',
+  })
+
+  const [conditions, setConditions] = useLocalStorage('dnd-conditions',
+    Object.fromEntries(CONDITIONS.map((c) => [c, false]))
+  )
+
+  const [notes, setNotes] = useLocalStorage('dnd-notes', {
+    notes: '',
+    allies: '',
+  })
+
   const [arcana, setArcana] = useLocalStorage('dnd-arcana', {
     pactLevel: '3',
     pactTotal: 2,
     pactFilled: 1,
+    spellSlots: Array.from({ length: 9 }, () => ({ total: '0', filled: 0 })),
     cantrips: 'Eldritch Blast, Toll the Dead, Mage Hand',
     spells: 'Armor of Agathys, Hex, Bane, Blindness/Deafness, Fear, Phantom Steed, Vampiric Touch.',
     invocations: 'Agonizing Blast\nAdd CHA mod (+4) to Eldritch Blast damage.\n\nRepelling Blast\nPushes creature 10ft on blast hit.\n\nTomb of Levistus\nReaction: Encased in ice, gain 50 Temp HP, vulnerability to fire until next turn.',
   })
 
+  const handleExport = () => {
+    const data = {}
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key.startsWith('dnd-')) {
+        data[key] = JSON.parse(localStorage.getItem(key))
+      }
+    }
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${identity.name || 'character'}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const handleImport = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target.result)
+        Object.entries(data).forEach(([key, value]) => {
+          if (key.startsWith('dnd-')) {
+            localStorage.setItem(key, JSON.stringify(value))
+          }
+        })
+        window.location.reload()
+      } catch {
+        // invalid file
+      }
+    }
+    reader.readAsText(file)
+    e.target.value = ''
+  }
+
+  const handleReset = () => {
+    if (!window.confirm('Resetar todos os dados do personagem? Isso nao pode ser desfeito.')) return
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const key = localStorage.key(i)
+      if (key.startsWith('dnd-')) localStorage.removeItem(key)
+    }
+    window.location.reload()
+  }
+
   return (
-    <main className="desktop-container">
-      <div className="column">
-        <IdentityPanel data={identity} setData={setIdentity} />
-        <AttributesPanel combatStats={combatStats} setCombatStats={setCombatStats} stats={stats} setStats={setStats} />
-        <ArchivesPanel data={archives} setData={setArchives} />
-      </div>
+    <>
+      <Toolbar onExport={handleExport} onImport={handleImport} onReset={handleReset} />
+      <main className="desktop-container">
+        <div className="column">
+          <IdentityPanel data={identity} setData={setIdentity} />
+          <AttributesPanel combatStats={combatStats} setCombatStats={setCombatStats} stats={stats} setStats={setStats} />
+          <ArchivesPanel data={archives} setData={setArchives} />
+        </div>
 
-      <div className="column">
-        <ProficienciesPanel saves={saves} setSaves={setSaves} skills={skills} setSkills={setSkills} profData={profData} setProfData={setProfData} />
-      </div>
+        <div className="column">
+          <ProficienciesPanel saves={saves} setSaves={setSaves} skills={skills} setSkills={setSkills} profData={profData} setProfData={setProfData} />
+          <PersonalityPanel data={personality} setData={setPersonality} />
+          <ConditionsPanel data={conditions} setData={setConditions} />
+          <NotesPanel data={notes} setData={setNotes} />
+        </div>
 
-      <div className="column">
-        <ActionsPanel weapons={weapons} setWeapons={setWeapons} />
-        <ArcanaPanel arcana={arcana} setArcana={setArcana} />
-      </div>
-    </main>
+        <div className="column">
+          <ActionsPanel weapons={weapons} setWeapons={setWeapons} />
+          <ArcanaPanel arcana={arcana} setArcana={setArcana} />
+        </div>
+      </main>
+    </>
   )
 }
 
