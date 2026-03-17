@@ -1,0 +1,50 @@
+:root {
+  --bg-void: #000000;
+  --bg-panel: #110c0a;
+  --bg-panel-light: #1c1411;
+
+  --border-rust: #4a2e1b;
+  --border-bronze: #7a5431;
+  --border-gold: #b38b4d;
+  --border-glow: #fca830;
+
+  --text-bone: #e3d3bd;
+  --text-dim: #8b7355;
+  --text-amber: #fca830;
+  --text-blood: #c42323;
+
+  --font-pixel: 'VT323', monospace;
+
+  --pixel-border:
+    inset 2px 2px 0px rgba(179, 139, 77, 0.3),
+    inset -2px -2px 0px rgba(0, 0, 0, 0.8),
+    0 0 0 2px var(--border-bronze),
+    0 0 0 4px var(--bg-void),
+    0 0 0 6px var(--border-rust);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-bronze) var(--bg-void);
+}
+
+body {
+  background-color: var(--bg-void);
+  color: var(--text-bone);
+  font-family: var(--font-pixel);
+  font-size: 18px;
+  line-height: 1.2;
+  padding: 32px 24px;
+  min-height: 100vh;
+  background-image: linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.2) 50%);
+  background-size: 100% 4px;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 16px 8px;
+  }
+}

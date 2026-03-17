@@ -1,0 +1,761 @@
+<html lang="en" vid="0"><head vid="1">
+    <meta charset="UTF-8" vid="2">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" vid="3">
+    <title vid="4">D&amp;D 5e Character Record: Morgath</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" vid="5">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" vid="6">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&amp;display=swap" rel="stylesheet" vid="7">
+
+    <style vid="8">
+        :root {
+            --bg-void: #000000;
+            --bg-panel: #110c0a;
+            --bg-panel-light: #1c1411;
+            
+            --border-rust: #4a2e1b;
+            --border-bronze: #7a5431;
+            --border-gold: #b38b4d;
+            --border-glow: #fca830;
+            
+            --text-bone: #e3d3bd;
+            --text-dim: #8b7355;
+            --text-amber: #fca830;
+            --text-blood: #c42323;
+
+            --font-pixel: 'VT323', monospace;
+            
+            --pixel-border: 
+                inset 2px 2px 0px rgba(179, 139, 77, 0.3),
+                inset -2px -2px 0px rgba(0, 0, 0, 0.8),
+                0 0 0 2px var(--border-bronze),
+                0 0 0 4px var(--bg-void),
+                0 0 0 6px var(--border-rust);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-bronze) var(--bg-void);
+        }
+
+        body {
+            background-color: var(--bg-void);
+            color: var(--text-bone);
+            font-family: var(--font-pixel);
+            font-size: 18px;
+            line-height: 1.2;
+            padding: 32px 24px;
+            min-height: 100vh;
+            
+            background-image: linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.2) 50%);
+            background-size: 100% 4px;
+        }
+
+        .desktop-container {
+            max-width: 1360px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 32px;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .panel {
+            background-color: var(--bg-panel);
+            box-shadow: var(--pixel-border);
+            position: relative;
+            margin: 6px; 
+            height: fit-content;
+        }
+
+        .panel-header {
+            background-color: var(--bg-panel-light);
+            color: var(--text-amber);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 8px 12px;
+            font-size: 22px;
+            border-bottom: 2px solid var(--border-bronze);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-shadow: 1px 1px 0 #000;
+        }
+
+        .panel-header::before, .panel-header::after {
+            content: "■";
+            font-size: 12px;
+            color: var(--border-gold);
+        }
+
+        .panel-content {
+            padding: 16px;
+        }
+
+        .corner-decor {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: var(--border-gold);
+            border: 2px solid var(--bg-void);
+            z-index: 10;
+        }
+        .tl { top: -4px; left: -4px; }
+        .tr { top: -4px; right: -4px; }
+        .bl { bottom: -4px; left: -4px; }
+        .br { bottom: -4px; right: -4px; }
+
+        h1, h2, h3 { font-weight: normal; margin: 0; }
+        
+        .label {
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+
+        .value {
+            color: var(--text-bone);
+            font-size: 22px;
+        }
+
+        .amber-text { color: var(--text-amber); }
+        .blood-text { color: var(--text-blood); }
+
+        .identity-grid {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 16px;
+            align-items: stretch;
+        }
+
+        .portrait-container {
+            width: 100px;
+            height: 120px;
+            border: 2px solid var(--border-gold);
+            padding: 2px;
+            background: var(--bg-void);
+            position: relative;
+        }
+
+        .portrait-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(80%) sepia(40%) contrast(1.2) brightness(0.8);
+        }
+        
+        .portrait-container::after {
+            content: '';
+            position: absolute;
+            top:0; left:0; right:0; bottom:0;
+            background: linear-gradient(rgba(252, 168, 48, 0.1) 50%, rgba(0,0,0,0.2) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+
+        .char-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .char-name {
+            font-size: 36px;
+            color: var(--text-amber);
+            text-shadow: 2px 2px 0 var(--bg-void);
+            border-bottom: 1px dashed var(--border-bronze);
+            padding-bottom: 4px;
+            line-height: 1;
+        }
+
+        .char-meta {
+            font-size: 18px;
+            color: var(--text-dim);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .vitality-block {
+            margin-top: 20px;
+            background: var(--bg-void);
+            border: 2px solid var(--border-rust);
+            padding: 10px;
+        }
+
+        .hp-numbers {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 6px;
+        }
+
+        .hp-current { font-size: 32px; color: var(--text-blood); }
+        .hp-max { font-size: 20px; color: var(--text-dim); }
+
+        .hp-bar-container {
+            height: 16px;
+            background: #2a0a0a;
+            border: 1px solid var(--border-bronze);
+            position: relative;
+        }
+
+        .hp-bar-fill {
+            height: 100%;
+            width: 75%;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--text-blood),
+                var(--text-blood) 4px,
+                #851212 4px,
+                #851212 8px
+            );
+            border-right: 2px solid var(--text-amber);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .stat-box {
+            background: var(--bg-panel-light);
+            border: 2px solid var(--border-bronze);
+            text-align: center;
+            padding: 12px 6px;
+            position: relative;
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+            pointer-events: none;
+        }
+
+        .stat-mod {
+            font-size: 38px;
+            color: var(--text-bone);
+            margin: 6px 0;
+            text-shadow: 2px 2px 0 var(--bg-void);
+            line-height: 1;
+        }
+
+        .stat-score {
+            font-size: 16px;
+            color: var(--text-amber);
+            border-top: 1px solid var(--border-rust);
+            padding-top: 4px;
+            width: 70%;
+            margin: 0 auto;
+        }
+
+        .combat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .combat-box {
+            border: 2px solid var(--border-rust);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 4px;
+            background: #0d0908;
+        }
+        
+        .combat-box .value { font-size: 32px; color: var(--text-amber); margin-top: 4px; line-height: 1; }
+        .combat-box .label { font-size: 14px; }
+
+        .skill-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .skill-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 4px;
+            border-bottom: 1px solid rgba(122, 84, 49, 0.3);
+        }
+        
+        .skill-row:hover {
+            background-color: rgba(179, 139, 77, 0.05);
+        }
+
+        .skill-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+        }
+
+        .prof-pip {
+            width: 12px;
+            height: 12px;
+            border: 2px solid var(--border-bronze);
+            display: inline-block;
+        }
+
+        .prof-pip.active {
+            background-color: var(--text-amber);
+            border-color: var(--border-gold);
+            box-shadow: 0 0 4px var(--text-amber);
+        }
+        
+        .prof-pip.exp {
+            background-color: var(--text-amber);
+            border-color: var(--border-gold);
+            position: relative;
+        }
+        .prof-pip.exp::after {
+            content: '+';
+            position: absolute;
+            color: var(--bg-void);
+            font-size: 16px;
+            top: -6px; left: -1px;
+            font-weight: bold;
+        }
+
+        .skill-mod {
+            color: var(--text-bone);
+            font-size: 22px;
+            width: 36px;
+            text-align: right;
+        }
+
+        .skill-attr {
+            font-size: 14px;
+            color: var(--text-dim);
+            width: 36px;
+            text-align: left;
+            margin-left: 4px;
+        }
+
+        .weapon-card {
+            background: var(--bg-void);
+            border: 1px solid var(--border-rust);
+            padding: 12px;
+            margin-bottom: 12px;
+            transition: border-color 0.2s;
+        }
+        
+        .weapon-card:hover {
+            border-color: var(--border-bronze);
+        }
+
+        .weapon-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-bronze);
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+
+        .weapon-name { color: var(--text-bone); font-size: 22px; }
+        .weapon-type { color: var(--text-dim); font-size: 16px; }
+        
+        .weapon-stats {
+            display: flex;
+            gap: 24px;
+        }
+
+        .weapon-stat-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .resource-track {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--border-rust);
+        }
+
+        .pips {
+            display: flex;
+            gap: 6px;
+        }
+
+        .pip {
+            width: 14px; height: 14px;
+            border: 2px solid var(--border-gold);
+            background: var(--bg-void);
+        }
+        .pip.filled { background: var(--text-amber); }
+
+        .text-block {
+            font-size: 18px;
+            color: var(--text-bone);
+            line-height: 1.5;
+        }
+        
+        .text-block p { margin-bottom: 10px; }
+        .feature-title { color: var(--text-amber); display: block; margin-bottom: 2px; font-size: 20px;}
+
+        .divider {
+            height: 2px;
+            background: var(--border-bronze);
+            position: relative;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .divider::before {
+            content: '';
+            width: 14px;
+            height: 14px;
+            background: var(--bg-void);
+            border: 2px solid var(--border-gold);
+            transform: rotate(45deg);
+        }
+        
+        .section-label {
+            color: var(--text-dim); 
+            margin-bottom: 10px; 
+            font-size: 16px;
+            letter-spacing: 1px;
+            display: block;
+        }
+
+    </style>
+</head>
+<body vid="9">
+
+<main class="desktop-container" vid="10">
+
+    
+    <div class="column" vid="11">
+        
+        <section class="panel" vid="12">
+            <div class="corner-decor tl" vid="13"></div><div class="corner-decor tr" vid="14"></div>
+            <div class="corner-decor bl" vid="15"></div><div class="corner-decor br" vid="16"></div>
+            <div class="panel-content" vid="17">
+                <div class="identity-grid" vid="18">
+                    <div class="portrait-container" vid="19">
+                        <img src="https://images.unsplash.com/photo-1509557965875-b88c97052f0e?auto=format&amp;fit=crop&amp;q=80&amp;w=200&amp;h=250" alt="Character Portrait" vid="20">
+                    </div>
+                    <div class="char-info" vid="21">
+                        <div class="char-name" vid="22">MORGATH</div>
+                        <div class="char-meta" vid="23">
+                            <span vid="24">LVL 5</span> • <span vid="25">WARLOCK</span> • <span vid="26">UNDEAD</span>
+                        </div>
+                        <div class="char-meta" style="color: var(--text-dim); font-size: 16px;" vid="27">
+                            BACKGROUND: HAUNTED ONE
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vitality-block" vid="28">
+                    <div class="hp-numbers" vid="29">
+                        <span class="label" vid="30">VITALITY</span>
+                        <div vid="31">
+                            <span class="hp-current" vid="32">38</span>
+                            <span class="hp-max" vid="33">/ 45</span>
+                        </div>
+                    </div>
+                    <div class="hp-bar-container" vid="34">
+                        <div class="hp-bar-fill" vid="35"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 8px;" vid="36">
+                        <span class="label" style="font-size: 16px;" vid="37">TEMP HP: <span class="amber-text" vid="38">12</span></span>
+                        <span class="label" style="font-size: 16px;" vid="39">HIT DICE: <span class="value" style="font-size:18px;" vid="40">5d8</span></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel" vid="41">
+            <div class="corner-decor tl" vid="42"></div><div class="corner-decor tr" vid="43"></div>
+            <div class="corner-decor bl" vid="44"></div><div class="corner-decor br" vid="45"></div>
+            <div class="panel-header" vid="46">ATTRIBUTES</div>
+            <div class="panel-content" vid="47">
+                
+                <div class="combat-grid" vid="48">
+                    <div class="combat-box" vid="49">
+                        <span class="label" vid="50">ARMOR</span>
+                        <span class="value" vid="51">14</span>
+                    </div>
+                    <div class="combat-box" vid="52">
+                        <span class="label" vid="53">INIT</span>
+                        <span class="value" vid="54">+2</span>
+                    </div>
+                    <div class="combat-box" vid="55">
+                        <span class="label" vid="56">SPEED</span>
+                        <span class="value" vid="57">30</span>
+                    </div>
+                    <div class="combat-box" vid="58">
+                        <span class="label" vid="59">PROF</span>
+                        <span class="value amber-text" vid="60">+3</span>
+                    </div>
+                </div>
+
+                <div class="stats-grid" vid="61">
+                    <div class="stat-box" vid="62">
+                        <div class="label" vid="63">STR</div>
+                        <div class="stat-mod" vid="64">-1</div>
+                        <div class="stat-score" vid="65">08</div>
+                    </div>
+                    <div class="stat-box" vid="66">
+                        <div class="label" vid="67">DEX</div>
+                        <div class="stat-mod" vid="68">+2</div>
+                        <div class="stat-score" vid="69">14</div>
+                    </div>
+                    <div class="stat-box" vid="70">
+                        <div class="label" vid="71">CON</div>
+                        <div class="stat-mod" vid="72">+3</div>
+                        <div class="stat-score" vid="73">16</div>
+                    </div>
+                    <div class="stat-box" vid="74">
+                        <div class="label" vid="75">INT</div>
+                        <div class="stat-mod" vid="76">+1</div>
+                        <div class="stat-score" vid="77">12</div>
+                    </div>
+                    <div class="stat-box" vid="78">
+                        <div class="label" vid="79">WIS</div>
+                        <div class="stat-mod" vid="80">0</div>
+                        <div class="stat-score" vid="81">10</div>
+                    </div>
+                    <div class="stat-box" style="border-color: var(--border-gold);" vid="82">
+                        <div class="label amber-text" vid="83">CHA</div>
+                        <div class="stat-mod amber-text" vid="84">+4</div>
+                        <div class="stat-score" vid="85">18</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="panel" vid="86">
+            <div class="corner-decor tl" vid="87"></div><div class="corner-decor tr" vid="88"></div>
+            <div class="corner-decor bl" vid="89"></div><div class="corner-decor br" vid="90"></div>
+            <div class="panel-header" vid="91">THE ARCHIVES</div>
+            <div class="panel-content" vid="92">
+                
+                <div class="text-block" vid="93">
+                    <span class="label" vid="94">TRAITS &amp; FEATURES</span>
+                    <p vid="95"><span class="feature-title" vid="96">Grave Touched</span> You do not need to eat, drink, or breathe.</p>
+                    <p vid="97"><span class="feature-title" vid="98">Heart of Darkness</span> Those who look into your eyes see their own demise. Advantage on intimidation against beasts.</p>
+                </div>
+
+                <div class="divider" vid="99"></div>
+
+                <div class="text-block" vid="100">
+                    <span class="label" vid="101">INVENTORY</span>
+                    <p style="color: var(--text-dim);" vid="102">
+                        Scholar's Pack, Component Pouch, A blackened locket containing ash, 2x Potions of Healing (red liquid swirls lazily), 45 Gold Pieces.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+
+    
+    <div class="column" vid="103">
+        
+        <section class="panel" vid="104">
+            <div class="corner-decor tl" vid="105"></div><div class="corner-decor tr" vid="106"></div>
+            <div class="corner-decor bl" vid="107"></div><div class="corner-decor br" vid="108"></div>
+            <div class="panel-header" vid="109">PROFICIENCIES</div>
+            <div class="panel-content" vid="110">
+                
+                <span class="section-label" vid="111">SAVING THROWS</span>
+                <div class="skill-list" style="margin-bottom: 24px;" vid="112">
+                    <div class="skill-row" vid="113">
+                        <div class="skill-name" vid="114"><span class="prof-pip" vid="115"></span>STR</div>
+                        <div class="skill-mod" vid="116">-1</div>
+                    </div>
+                    <div class="skill-row" vid="117">
+                        <div class="skill-name" vid="118"><span class="prof-pip" vid="119"></span>DEX</div>
+                        <div class="skill-mod" vid="120">+2</div>
+                    </div>
+                    <div class="skill-row" vid="121">
+                        <div class="skill-name" vid="122"><span class="prof-pip" vid="123"></span>CON</div>
+                        <div class="skill-mod" vid="124">+3</div>
+                    </div>
+                    <div class="skill-row" vid="125">
+                        <div class="skill-name" vid="126"><span class="prof-pip" vid="127"></span>INT</div>
+                        <div class="skill-mod" vid="128">+1</div>
+                    </div>
+                    <div class="skill-row" vid="129">
+                        <div class="skill-name" vid="130"><span class="prof-pip active" vid="131"></span>WIS</div>
+                        <div class="skill-mod amber-text" vid="132">+3</div>
+                    </div>
+                    <div class="skill-row" vid="133">
+                        <div class="skill-name" vid="134"><span class="prof-pip active" vid="135"></span>CHA</div>
+                        <div class="skill-mod amber-text" vid="136">+7</div>
+                    </div>
+                </div>
+
+                <span class="section-label" vid="137">NOTABLE SKILLS</span>
+                <div class="skill-list" vid="138">
+                    <div class="skill-row" vid="139">
+                        <div class="skill-name" vid="140"><span class="prof-pip active" vid="141"></span>Arcana <span class="skill-attr" vid="142">INT</span></div>
+                        <div class="skill-mod" vid="143">+4</div>
+                    </div>
+                    <div class="skill-row" vid="144">
+                        <div class="skill-name" vid="145"><span class="prof-pip active" vid="146"></span>Deception <span class="skill-attr" vid="147">CHA</span></div>
+                        <div class="skill-mod" vid="148">+7</div>
+                    </div>
+                    <div class="skill-row" vid="149">
+                        <div class="skill-name" vid="150"><span class="prof-pip exp" vid="151"></span>Intimidation <span class="skill-attr" vid="152">CHA</span></div>
+                        <div class="skill-mod amber-text" vid="153">+10</div>
+                    </div>
+                    <div class="skill-row" vid="154">
+                        <div class="skill-name" vid="155"><span class="prof-pip" vid="156"></span>Perception <span class="skill-attr" vid="157">WIS</span></div>
+                        <div class="skill-mod" vid="158">0</div>
+                    </div>
+                    <div class="skill-row" vid="159">
+                        <div class="skill-name" vid="160"><span class="prof-pip active" vid="161"></span>Religion <span class="skill-attr" vid="162">INT</span></div>
+                        <div class="skill-mod" vid="163">+4</div>
+                    </div>
+                </div>
+                
+                <div class="divider" vid="164"></div>
+                
+                <div style="display: flex; flex-direction: column; gap: 12px;" vid="165">
+                    <div class="label" style="font-size: 16px;" vid="166">PASSIVE PERCEPTION: <span class="value" style="margin-left: 8px;" vid="167">10</span></div>
+                    <div class="label" style="font-size: 16px;" vid="168">LANGUAGES: <span style="color:var(--text-bone); text-transform:none; margin-left: 8px;" vid="169">Common, Abyssal, Deep Speech</span></div>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+
+    
+    <div class="column" vid="170">
+        
+        <section class="panel" vid="171">
+            <div class="corner-decor tl" vid="172"></div><div class="corner-decor tr" vid="173"></div>
+            <div class="corner-decor bl" vid="174"></div><div class="corner-decor br" vid="175"></div>
+            <div class="panel-header" vid="176">ACTIONS</div>
+            <div class="panel-content" vid="177">
+                
+                <div class="weapon-card" vid="178">
+                    <div class="weapon-header" vid="179">
+                        <span class="weapon-name amber-text" vid="180">Eldritch Blast</span>
+                        <span class="weapon-type" vid="181">Spell (2 Beams)</span>
+                    </div>
+                    <div class="weapon-stats" vid="182">
+                        <div class="weapon-stat-group" vid="183">
+                            <span class="label" vid="184">ATK</span>
+                            <span class="value" vid="185">+7</span>
+                        </div>
+                        <div class="weapon-stat-group" vid="186">
+                            <span class="label" vid="187">DMG</span>
+                            <span class="value" vid="188">1d10+4</span>
+                        </div>
+                        <div class="weapon-stat-group" vid="189">
+                            <span class="label" vid="190">TYPE</span>
+                            <span style="color:var(--text-bone);" vid="191">Force</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="weapon-card" vid="192">
+                    <div class="weapon-header" vid="193">
+                        <span class="weapon-name" vid="194">Bone Dagger</span>
+                        <span class="weapon-type" vid="195">Finesse, Light</span>
+                    </div>
+                    <div class="weapon-stats" vid="196">
+                        <div class="weapon-stat-group" vid="197">
+                            <span class="label" vid="198">ATK</span>
+                            <span class="value" vid="199">+5</span>
+                        </div>
+                        <div class="weapon-stat-group" vid="200">
+                            <span class="label" vid="201">DMG</span>
+                            <span class="value" vid="202">1d4+2</span>
+                        </div>
+                        <div class="weapon-stat-group" vid="203">
+                            <span class="label" vid="204">TYPE</span>
+                            <span style="color:var(--text-bone);" vid="205">Pierce</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="weapon-card" style="border-color: var(--border-bronze); background: #16100d; margin-bottom: 0;" vid="206">
+                    <div class="weapon-header" style="border-bottom: none; padding-bottom: 0; margin-bottom: 0;" vid="207">
+                        <span class="weapon-name" style="font-size: 20px;" vid="208">Form of Dread</span>
+                        <span class="weapon-type" vid="209">Bonus Action</span>
+                    </div>
+                    <div style="font-size: 16px; color: var(--text-dim); margin-top: 6px; line-height: 1.4;" vid="210">
+                        Transform for 1 min. Gain Temp HP (1d10+5). Once per turn, hit attack forces WIS save (DC 15) or Frightened.
+                    </div>
+                    <div style="margin-top: 10px; display:flex; align-items:center; gap:12px;" vid="211">
+                        <span class="label" vid="212">USES:</span>
+                        <div class="pips" vid="213">
+                            <div class="pip filled" vid="214"></div>
+                            <div class="pip filled" vid="215"></div>
+                            <div class="pip" vid="216"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="panel" vid="217">
+            <div class="corner-decor tl" vid="218"></div><div class="corner-decor tr" vid="219"></div>
+            <div class="corner-decor bl" vid="220"></div><div class="corner-decor br" vid="221"></div>
+            <div class="panel-header" vid="222">ARCANA</div>
+            <div class="panel-content" vid="223">
+                
+                <div class="resource-track" vid="224">
+                    <span class="label" style="width: 100px;" vid="225">PACT SLOTS</span>
+                    <span class="value" style="font-size: 20px; margin-right: 8px;" vid="226">LVL 3</span>
+                    <div class="pips" vid="227">
+                        <div class="pip filled" vid="228"></div>
+                        <div class="pip" vid="229"></div>
+                    </div>
+                </div>
+
+                <div class="text-block" style="margin-top: 16px;" vid="230">
+                    <span class="label" vid="231">CANTRIPS</span>
+                    <p style="color: var(--text-dim);" vid="232">Eldritch Blast, Toll the Dead, Mage Hand</p>
+                    
+                    <span class="label" vid="233">SPELLS KNOWN</span>
+                    <p style="color: var(--text-dim);" vid="234">
+                        Armor of Agathys, Hex, Bane, Blindness/Deafness, Fear, Phantom Steed, Vampiric Touch.
+                    </p>
+                </div>
+                
+                <div class="divider" vid="235"></div>
+
+                <div class="text-block" vid="236">
+                    <span class="label" vid="237">INVOCATIONS</span>
+                    <p vid="238"><span class="feature-title" vid="239">Agonizing Blast</span> Add CHA mod (+4) to Eldritch Blast damage.</p>
+                    <p vid="240"><span class="feature-title" vid="241">Repelling Blast</span> Pushes creature 10ft on blast hit.</p>
+                    <p vid="242"><span class="feature-title" vid="243">Tomb of Levistus</span> Reaction: Encased in ice, gain 50 Temp HP, vulnerability to fire until next turn.</p>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+
+</main>
+
+
+</body></html>

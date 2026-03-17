@@ -1,0 +1,562 @@
+.desktop-container {
+  max-width: 1360px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Panel */
+.panel {
+  background-color: var(--bg-panel);
+  box-shadow: var(--pixel-border);
+  position: relative;
+  margin: 6px;
+  height: fit-content;
+}
+
+.panel-header {
+  background-color: var(--bg-panel-light);
+  color: var(--text-amber);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 8px 12px;
+  font-size: 22px;
+  border-bottom: 2px solid var(--border-bronze);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.panel-header::before,
+.panel-header::after {
+  content: "■";
+  font-size: 12px;
+  color: var(--border-gold);
+}
+
+.panel-content {
+  padding: 16px;
+}
+
+/* Corner decorations */
+.corner-decor {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: var(--border-gold);
+  border: 2px solid var(--bg-void);
+  z-index: 10;
+}
+.tl { top: -4px; left: -4px; }
+.tr { top: -4px; right: -4px; }
+.bl { bottom: -4px; left: -4px; }
+.br { bottom: -4px; right: -4px; }
+
+h1, h2, h3 { font-weight: normal; margin: 0; }
+
+.label {
+  color: var(--text-dim);
+  text-transform: uppercase;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+.value {
+  color: var(--text-bone);
+  font-size: 22px;
+}
+
+.amber-text { color: var(--text-amber); }
+.blood-text { color: var(--text-blood); }
+
+/* Identity */
+.identity-grid {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.portrait-container {
+  width: 100px;
+  height: 120px;
+  border: 2px solid var(--border-gold);
+  padding: 2px;
+  background: var(--bg-void);
+  position: relative;
+}
+
+.portrait-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(80%) sepia(40%) contrast(1.2) brightness(0.8);
+}
+
+.portrait-container::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(rgba(252, 168, 48, 0.1) 50%, rgba(0,0,0,0.2) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+}
+
+.char-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+
+.char-name {
+  font-size: 36px;
+  color: var(--text-amber);
+  text-shadow: 2px 2px 0 var(--bg-void);
+  border-bottom: 1px dashed var(--border-bronze);
+  padding-bottom: 4px;
+  line-height: 1;
+}
+
+.char-meta {
+  font-size: 18px;
+  color: var(--text-dim);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Vitality */
+.vitality-block {
+  margin-top: 20px;
+  background: var(--bg-void);
+  border: 2px solid var(--border-rust);
+  padding: 10px;
+}
+
+.hp-numbers {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.hp-current { font-size: 32px; color: var(--text-blood); }
+.hp-max { font-size: 20px; color: var(--text-dim); }
+
+.hp-bar-container {
+  height: 16px;
+  background: #2a0a0a;
+  border: 1px solid var(--border-bronze);
+  position: relative;
+}
+
+.hp-bar-fill {
+  height: 100%;
+  width: 75%;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--text-blood),
+    var(--text-blood) 4px,
+    #851212 4px,
+    #851212 8px
+  );
+  border-right: 2px solid var(--text-amber);
+}
+
+/* Stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.stat-box {
+  background: var(--bg-panel-light);
+  border: 2px solid var(--border-bronze);
+  text-align: center;
+  padding: 12px 6px;
+  position: relative;
+}
+
+.stat-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+  pointer-events: none;
+}
+
+.stat-mod {
+  font-size: 38px;
+  color: var(--text-bone);
+  margin: 6px 0;
+  text-shadow: 2px 2px 0 var(--bg-void);
+  line-height: 1;
+}
+
+.stat-score {
+  font-size: 16px;
+  color: var(--text-amber);
+  border-top: 1px solid var(--border-rust);
+  padding-top: 4px;
+  width: 70%;
+  margin: 0 auto;
+}
+
+/* Combat */
+.combat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.combat-box {
+  border: 2px solid var(--border-rust);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 4px;
+  background: #0d0908;
+}
+
+.combat-box .value { font-size: 32px; color: var(--text-amber); margin-top: 4px; line-height: 1; }
+.combat-box .label { font-size: 14px; }
+
+/* Skills */
+.skill-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skill-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 4px;
+  border-bottom: 1px solid rgba(122, 84, 49, 0.3);
+}
+
+.skill-row:hover {
+  background-color: rgba(179, 139, 77, 0.05);
+}
+
+.skill-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+}
+
+.prof-pip {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--border-bronze);
+  display: inline-block;
+}
+
+.prof-pip.active {
+  background-color: var(--text-amber);
+  border-color: var(--border-gold);
+  box-shadow: 0 0 4px var(--text-amber);
+}
+
+.prof-pip.exp {
+  background-color: var(--text-amber);
+  border-color: var(--border-gold);
+  position: relative;
+}
+.prof-pip.exp::after {
+  content: '+';
+  position: absolute;
+  color: var(--bg-void);
+  font-size: 16px;
+  top: -6px; left: -1px;
+  font-weight: bold;
+}
+
+.skill-mod {
+  color: var(--text-bone);
+  font-size: 22px;
+  width: 36px;
+  text-align: right;
+}
+
+.skill-attr {
+  font-size: 14px;
+  color: var(--text-dim);
+  width: 36px;
+  text-align: left;
+  margin-left: 4px;
+}
+
+/* Weapons */
+.weapon-card {
+  background: var(--bg-void);
+  border: 1px solid var(--border-rust);
+  padding: 12px;
+  margin-bottom: 12px;
+  transition: border-color 0.2s;
+}
+
+.weapon-card:hover {
+  border-color: var(--border-bronze);
+}
+
+.weapon-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-bronze);
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+}
+
+.weapon-name { color: var(--text-bone); font-size: 22px; }
+.weapon-type { color: var(--text-dim); font-size: 16px; }
+
+.weapon-stats {
+  display: flex;
+  gap: 24px;
+}
+
+.weapon-stat-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Resources */
+.resource-track {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--border-rust);
+}
+
+.pips {
+  display: flex;
+  gap: 6px;
+}
+
+.pip {
+  width: 14px; height: 14px;
+  border: 2px solid var(--border-gold);
+  background: var(--bg-void);
+}
+.pip.filled { background: var(--text-amber); }
+
+/* Text blocks */
+.text-block {
+  font-size: 18px;
+  color: var(--text-bone);
+  line-height: 1.5;
+}
+
+.text-block p { margin-bottom: 10px; }
+.feature-title { color: var(--text-amber); display: block; margin-bottom: 2px; font-size: 20px; }
+
+.divider {
+  height: 2px;
+  background: var(--border-bronze);
+  position: relative;
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.divider::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  background: var(--bg-void);
+  border: 2px solid var(--border-gold);
+  transform: rotate(45deg);
+}
+
+.section-label {
+  color: var(--text-dim);
+  margin-bottom: 10px;
+  font-size: 16px;
+  letter-spacing: 1px;
+  display: block;
+}
+
+/* Editable invisible inputs */
+.editable-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  padding: 0;
+  margin: 0;
+  line-height: inherit;
+}
+
+.editable-input:hover {
+  background: rgba(179, 139, 77, 0.08);
+}
+
+.editable-input:focus {
+  background: rgba(179, 139, 77, 0.12);
+  box-shadow: 0 0 0 1px var(--border-bronze);
+}
+
+.editable-textarea {
+  width: 100%;
+  resize: none;
+  display: block;
+  margin: 6px 0 10px;
+  overflow: hidden;
+  field-sizing: content;
+}
+
+/* Responsive — Tablet (2 columns) */
+@media (max-width: 1100px) {
+  .desktop-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+}
+
+/* Responsive — Mobile (single column) */
+@media (max-width: 768px) {
+  .desktop-container {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .column {
+    gap: 16px;
+  }
+
+  .panel-content {
+    padding: 12px;
+  }
+
+  .panel-header {
+    font-size: 18px;
+    padding: 6px 10px;
+  }
+
+  /* Identity */
+  .identity-grid {
+    grid-template-columns: 80px 1fr;
+    gap: 12px;
+  }
+
+  .portrait-container {
+    width: 80px;
+    height: 100px;
+  }
+
+  .char-name,
+  .char-name .editable-input {
+    font-size: 28px !important;
+  }
+
+  .char-meta {
+    font-size: 15px;
+    gap: 6px;
+  }
+
+  /* Combat stats */
+  .combat-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .combat-box .value,
+  .combat-box .editable-input {
+    font-size: 26px !important;
+  }
+
+  /* Ability scores */
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .stat-mod,
+  .stat-mod .editable-input {
+    font-size: 30px !important;
+  }
+
+  .stat-box {
+    padding: 8px 4px;
+  }
+
+  /* Weapon cards */
+  .weapon-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .weapon-stats {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  /* Skills */
+  .skill-name {
+    font-size: 17px;
+  }
+
+  .skill-mod {
+    font-size: 19px;
+  }
+
+  /* Resource track */
+  .resource-track {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Vitality */
+  .hp-current,
+  .hp-current-input {
+    font-size: 26px !important;
+  }
+}
+
+/* Responsive — Very small screens */
+@media (max-width: 400px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .combat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .identity-grid {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .char-info {
+    align-items: center;
+  }
+
+  .char-meta {
+    justify-content: center;
+  }
+}
